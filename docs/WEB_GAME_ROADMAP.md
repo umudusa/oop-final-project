@@ -1,42 +1,42 @@
-# Blackjack Casino — Web Game Roadmap
+# Blackjack Casino — C++ Backend Game Roadmap
 
-This branch is the independent portfolio/game development track. The original C++ academic assignment remains unchanged on `main` until separately reviewed.
+This branch is an independent portfolio game track. Preserve the academic C++ assignment on main; do not mix instructor submissions with portfolio features.
 
-## Product
-A browser-playable, virtual-chip blackjack casino with a polished lobby, animated table, 4–8-seat rooms, bot players, and eventually online multiplayer. No real-money wagering or cash-out.
+## Architecture decision
+**C++20 is authoritative for all gameplay and backend logic.** No TypeScript/JavaScript game engine.
 
-## Rules baseline
-- Standard blackjack: numbered cards at face value, faces 10, ace 1/11; dealer hits through 16 and stands on 17+.
-- Natural blackjack pays 3:2; equal totals push; ordinary wins pay 1:1.
-- Red ($5–45 in $5 steps), Green ($50–95 in $5 steps), Black ($100–490 in $10 steps), Blue ($500–1000 in $10 steps).
-- Rules and strategies should be independently testable; avoid putting game logic in UI components.
-- Room capacity 4–8 seats; do not confuse a visible seat count with actual connected multiplayer users.
+- `cpp/game-engine/`: portable C++20 classes for Card, Deck/Shoe, Hand, Player, Dealer, Table, Wager, Rules and settlement, with CMake and unit tests.
+- `cpp/server/`: C++ Drogon HTTP/WebSocket server; server-owned room state, cards, turns, virtual-chip balances and settlement.
+- `apps/web/`: React + TypeScript frontend ONLY for lobby, cards, controls, animations, room display and communication with C++ backend.
+- `docs/`: design decisions, architecture and deployment.
+- PostgreSQL later for accounts, history and statistics.
 
-## Proposed structure
+Reuse/refactor the existing C++ Player, RandomPlayer, RandomRedPlayer and Dealer classes after reviewing their implementations. Do not assume they already implement full game rules.
+
+## Game requirements
+- Browser-playable blackjack, virtual chips only (no deposits, withdrawals or cash-out).
+- Dealer draws on 16 or less and stands on 17 or more; natural blackjack pays 3:2, regular wins 1:1, pushes return wagers.
+- Red ($5–45 in steps of 5), Green ($50–95 in steps of 5), Black ($100–490 in steps of 10), Blue ($500–1000 in steps of 10).
+- Room capacity 4–8 seats; real online seat counts only after multiplayer is implemented.
+- Bot strategies: Safe, Random, Mimics Dealer, custom; optional expert counting.
+- All card draws, wager validation and outcomes must be calculated in C++ on the server.
+
+## Delivery milestones
+1. C++20 game engine with CMake, unit tests and deterministic game simulations.
+2. C++ Drogon server with endpoints for starting a round, placing bets, hit, stand and retrieving state.
+3. React frontend: polished lobby, one fully playable single-player table, animations and virtual chips.
+4. C++ WebSocket multiplayer rooms, seats, synchronized turns, reconnect handling, anti-duplicate action safeguards.
+5. Persistent profiles and stats, CI, production deployment and monitoring.
+
+## Proposed repository layout
 ```
+cpp/
+  game-engine/
+  server/
 apps/
-  web/           React + TypeScript + Vite + Tailwind; responsive lobby and game table
-  server/        Node.js + TypeScript + Socket.IO; authoritative room state
-packages/
-  game-engine/   Pure TypeScript rules, deck, hand, wagers, settlement, bot strategies
-  shared/        Event and API types
+  web/
 docs/
   WEB_GAME_ROADMAP.md
 ```
 
-## Milestones
-1. Single-player playable MVP: lobby, one table, virtual chips, bet, deal, hit, stand, settlement, restart, tests.
-2. Add dealer/bot strategies, room categories, 4–8 seats, responsive card animations.
-3. Server-authoritative multiplayer: join/leave, seat assignment, turn timers, reconnects, concurrent rooms.
-4. Persistent accounts, history, stats, rankings and optional Hall of Fame.
-5. CI, deployment, monitoring, security review and accessible mobile UI.
-
-## Engineering principles
-- Academic C++ code is retained as historical source, not silently replaced.
-- Never trust a client-supplied card, balance or payout in multiplayer.
-- All chips are virtual, with no deposits, withdrawals or cash conversion.
-- Protect against duplicate game actions and disconnections.
-- Every milestone must be playable and accompanied by reproducible tests and setup instructions.
-
-## First implementation task
-Build and test `packages/game-engine` and `apps/web` for a complete single-player round before advertising multiplayer or deployment as working.
+**Status:** Architecture plan only; no playable GUI or server implemented yet.
