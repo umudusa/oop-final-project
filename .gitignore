@@ -1,4 +1,4 @@
-# Visual Studio
+# C++ and CMake
 .vs/
 *.user
 *.suo
@@ -22,6 +22,23 @@
 *.obj
 *.pch
 *.lastbuildstate
-# OS
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+compile_commands.json
+
+# Web
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+
+# OS and editor
 .DS_Store
 Thumbs.db
+.idea/
+.vscode/
