@@ -1,36 +1,22 @@
-# Blackjack Casino — Development Roadmap
+# Blackjack Casino — Product Roadmap
 
-## Goal
-Build a professional, independently developed, browser-playable blackjack casino using virtual chips, with multiplayer rooms and a C++ backend. This GitHub repository is for personal development and portfolio use; course submissions are handled separately outside this repository.
+A personal, independent, deployable blackjack game. **C++20 remains authoritative** for game rules, cards, balance calculations, turns, bots and server-side multiplayer state.
 
 ## Architecture
-- C++20: authoritative game engine and backend; all card draws, turn validation, payouts and balances happen server-side
-- Drogon: planned C++ HTTP/WebSocket API
-- React + TypeScript + Tailwind: planned responsive browser GUI, with no duplicate blackjack rules engine
-- PostgreSQL: planned persistent accounts and statistics
-- CMake/CTest and GitHub Actions: build and automated verification
+- `cpp/game-engine`: C++20 rules and round state machine, CMake/CTest
+- `cpp/server` (planned): Drogon HTTP/WebSocket server
+- `apps/web` (planned): React + TypeScript + Vite for UI only
+- PostgreSQL (planned): users, game history, statistics
+- GitHub Actions: C++ checks
 
-## Core game
-- Ace 1/11, faces 10, natural blackjack pays 3:2, standard win 1:1, push returns wager
-- Dealer hits on 16 and stands on 17
-- Virtual chips only, no real-money gambling or cash-out
-- Red, Green, Black and Blue betting tiers
-- 4–8 seat rooms; show real online player counts only once network multiplayer works
-- Bot strategies and optional advanced actions after the basic round works
+## Milestones
+1. C++ rules engine, wagers, round lifecycle and tests — initial version implemented.
+2. C++ server API and single-player playable browser table.
+3. Four strategy bots, room tiers, 4–8 seats, casino simulation/statistics and level progression.
+4. Secure real-time multiplayer, accounts, session isolation, reconnects and transactional chips.
+5. Responsive UI polish, accessibility, Docker, deployment and observability.
 
-## Delivery milestones
-1. **Engine:** complete C++ round state machine, deterministic tests and wager validation
-2. **Playable MVP:** C++ API + polished React table; bet, deal, hit, stand, settlement and restart
-3. **Multiplayer:** server-authoritative WebSocket rooms, seats, turns, reconnects and anti-duplicate actions
-4. **Production:** profiles, statistics, accessible mobile UI, CI and hosted deployment
+See [feature checklist](FEATURE_REQUIREMENTS.md) for specification coverage.
 
-## Structure
-```
-cpp/game-engine/     C++20 rules engine and tests
-cpp/server/          Planned C++ API and WebSocket server
-apps/web/            Planned React browser client
-src/                 Earlier C++ prototype, retained as reference
-docs/                Architecture and roadmap
-```
-
-**Current status:** The initial engine code and test target exist; the GUI, API, rooms and deployment are not implemented yet.
+## Security
+Only virtual chips. Never deploy a shared global table as multiplayer. Server must own the deck and payouts, validate actions and bets, isolate sessions, rate limit requests and handle concurrency.

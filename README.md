@@ -1,40 +1,29 @@
 # Blackjack Casino
 
-An independent, open-source **C++20-backed blackjack game** in development. The goal is a polished browser game with virtual chips, animated cards, online rooms and multiplayer.
+An independent, modern **C++20-backed Blackjack Casino** game and software-engineering portfolio project.
 
-> Current status: initial C++ rules engine and tests. **Not yet a playable GUI or deployed multiplayer game.**
+> **Status:** C++ rules engine and single-player round lifecycle implemented. The web GUI, C++ server, multiplayer and deployment are upcoming, not yet playable.
 
-## Tech direction
+## Technology
+- **C++20** for authoritative game logic and future backend
+- **CMake + CTest + GitHub Actions** for build and verification
+- Planned: **Drogon (C++ HTTP/WebSocket)**, **React + TypeScript** UI, **PostgreSQL** persistence
 
-- **C++20** for authoritative blackjack rules, server and multiplayer game state
-- **Drogon + WebSockets** planned for the C++ HTTP/realtime server
-- **React + TypeScript** planned for the browser UI only
-- **PostgreSQL** planned for accounts and statistics
-- **CMake + CTest + GitHub Actions** for reproducible builds and checks
+## Current project
+- `cpp/game-engine/Blackjack.hpp`: card/deck/hand rules, wager tiers, outcomes, payouts
+- `cpp/game-engine/Round.hpp`: single-player round state machine with virtual chip balance
+- `cpp/game-engine/tests.cpp` and `round_tests.cpp`: baseline tests
+- `legacy/prototype/`: preserved early C++ prototype, not the current application
+- `docs/FEATURE_REQUIREMENTS.md`: full feature checklist based on the Blackjack Casino specification
 
-## Repository
-
-- `cpp/game-engine/Blackjack.hpp`: cards, shuffled shoe, hand values, outcome and payout logic, table wager tiers
-- `cpp/game-engine/tests.cpp`: baseline engine assertions
-- `cpp/game-engine/CMakeLists.txt`: standalone engine test build
-- `docs/WEB_GAME_ROADMAP.md`: product roadmap and architecture
-- `src/`: legacy C++ prototype retained for reference while migrating to the game engine
-
-## Run the current tests
-
-```bash
+## Build and test
+```sh
 cmake -S cpp/game-engine -B build/engine
 cmake --build build/engine
 ctest --test-dir build/engine --output-on-failure
 ```
 
-## Development plan
+## Next milestones
+C++ server, polished playable browser table, four strategies, 4–8-seat rooms, multiplayer and public deployment. See [roadmap](docs/WEB_GAME_ROADMAP.md).
 
-1. C++ game engine with complete single-player round lifecycle and tests.
-2. C++ server API and one fully playable browser table.
-3. Lobby, 4–8-seat rooms, bots and real-time multiplayer.
-4. Profiles, statistics, mobile polish and cloud deployment.
-
-All wagers use **virtual chips only**, with no real-money deposits or withdrawals.
-
-This repository is a personal software-development project, not a course submission. See the [roadmap](docs/WEB_GAME_ROADMAP.md).
+Virtual chips only; no real-money wagering or withdrawals.
