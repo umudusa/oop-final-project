@@ -67,7 +67,11 @@ void handle(const HttpRequestPtr& req,std::function<void(const HttpResponsePtr&)
     else if(action=="stand") game.stand();
     auto res=HttpResponse::newHttpJsonResponse(snapshot(game));
     res->addHeader("Cache-Control","no-store");
-    if(created) res->addHeader("Set-Cookie","casino_session="+id+"; Path=/; HttpOnly; SameSite=Strict; Secure");
+    if(created) {
+      std::string cookie="casino_session="+id+"; Path=/; HttpOnly; SameSite=Strict";
+      if(req->getHeader("x-forwarded-proto")=="https") cookie+="; Secure";
+      res->addHeader("Set-Cookie",cookie);
+    }
     cb(res);
   } catch(const std::exception& e) {
     Json::Value err;err["error"]=e.what();
