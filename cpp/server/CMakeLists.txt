@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.20)
+project(BlackjackServer LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 20)
+find_package(Drogon CONFIG REQUIRED)
+add_executable(blackjack_server main.cpp)
+target_include_directories(blackjack_server PRIVATE ../game-engine)
+target_link_libraries(blackjack_server PRIVATE Drogon::Drogon)

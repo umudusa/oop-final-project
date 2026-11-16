@@ -1,22 +1,27 @@
-# Blackjack Casino — Product Roadmap
+# Blackjack Casino — Development Roadmap
 
-A personal, independent, deployable blackjack game. **C++20 remains authoritative** for game rules, cards, balance calculations, turns, bots and server-side multiplayer state.
+This is a personal software portfolio project. **C++20 is authoritative** for rules, cards, chips, turns and server-side multiplayer state. React is a presentation layer only.
 
-## Architecture
-- `cpp/game-engine`: C++20 rules and round state machine, CMake/CTest
-- `cpp/server` (planned): Drogon HTTP/WebSocket server
-- `apps/web` (planned): React + TypeScript + Vite for UI only
-- PostgreSQL (planned): users, game history, statistics
-- GitHub Actions: C++ checks
+## Phase 1 — Local playable prototype (initial code committed)
+- [x] C++ rules and single-player round lifecycle
+- [x] CMake/CTest tests and GitHub Actions
+- [x] Initial C++ Drogon HTTP API (localhost only)
+- [x] Initial responsive React table, Deal/Hit/Stand controls
+- [ ] Verify full browser-server integration, add automated API and end-to-end tests
+- [ ] Replace single shared development game with isolated player sessions
 
-## Milestones
-1. C++ rules engine, wagers, round lifecycle and tests — initial version implemented.
-2. C++ server API and single-player playable browser table.
-3. Four strategy bots, room tiers, 4–8 seats, casino simulation/statistics and level progression.
-4. Secure real-time multiplayer, accounts, session isolation, reconnects and transactional chips.
-5. Responsive UI polish, accessibility, Docker, deployment and observability.
+## Phase 2 — Casino simulation parity
+- Four player strategy families and four wagering levels
+- 4–8 seat tables, traffic generation, controller, statistics keeper, dealer refill events
+- Configurable level progression and UML diagrams
 
-See [feature checklist](FEATURE_REQUIREMENTS.md) for specification coverage.
+## Phase 3 — Secure multiplayer
+- Server-authoritative WebSocket rooms, seat ownership, timers and reconnects
+- Authentication, per-room state, persistent virtual chips, transactional settlement
+- Lobby, real room occupancy, leaderboard and player profiles
 
-## Security
-Only virtual chips. Never deploy a shared global table as multiplayer. Server must own the deck and payouts, validate actions and bets, isolate sessions, rate limit requests and handle concurrency.
+## Phase 4 — Production
+- Animations, responsive/mobile polish, accessibility, sound options
+- Docker, CI/CD, database, monitoring, load/security testing and public deployment
+
+Only virtual chips; no cash deposits, withdrawals or real-money gambling. See [feature checklist](FEATURE_REQUIREMENTS.md).
