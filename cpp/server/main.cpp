@@ -26,7 +26,7 @@ Json::Value card(Card c) {
 }
 Json::Value snapshot(const Round& game) {
   Json::Value j;
-  j["balance"]=Json::Int64(game.balance()); j["wager"]=Json::Int64(game.wager());
+  j["balance"]=Json::Int64(game.balance()); j["wager"]=Json::Int64(game.wager());\n  j["gameOver"]=game.balance()<5 && game.phase()!=Phase::PlayerTurn;
   j["phase"]=game.phase()==Phase::Betting?"betting":game.phase()==Phase::PlayerTurn?"playing":"finished";
   j["playerTotal"]=game.player().total();
   if(game.dealerHidden()) j["dealerTotal"]=Json::nullValue;
@@ -59,7 +59,7 @@ void handle(const HttpRequestPtr& req,std::function<void(const HttpResponsePtr&)
       id=newId();it=sessions.emplace(id,std::make_unique<Round>()).first;created=true;
     }
     Round& game=*it->second;
-    if(action=="start") {
+    if(action=="start") {\n      if(game.balance()<5) throw std::invalid_argument("Game over: not enough chips to place the minimum bet");
       auto body=req->getJsonObject();
       if(!body||!body->isMember("bet")||!(*body)["bet"].isInt()) throw std::invalid_argument("Expected integer bet");
       game.start((*body)["bet"].asInt());
