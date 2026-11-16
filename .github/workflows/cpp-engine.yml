@@ -1,0 +1,16 @@
+name: C++ Blackjack Engine
+on:
+  push:
+    branches: [main, feature/casino-web-game]
+  pull_request:
+jobs:
+  engine-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S cpp/game-engine -B build/engine -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build/engine --parallel
+      - name: Test
+        run: ctest --test-dir build/engine --output-on-failure
