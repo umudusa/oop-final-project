@@ -1,17 +1,30 @@
 #include <drogon/drogon.h>
 #include "Round.hpp"
+#include <cstdlib>
+#include <iomanip>
+#include <map>
+#include <memory>
 #include <mutex>
+#include <random>
+#include <sstream>
+#include <string>
 using namespace drogon;
 using namespace blackjack;
 namespace {
-std::mutex mutex_;
-Round game; // LOCAL DEVELOPMENT ONLY: shared state, never expose publicly
+std::mutex sessionsMutex;
+std::map<std::string,std::unique_ptr<Round>> sessions;
+std::string newId() {
+  std::random_device rd;
+  std::ostringstream os;
+  for(int i=0;i<4;++i) os<<std::hex<<std::setw(8)<<std::setfill('0')<<rd();
+  return os.str();
+}
 Json::Value card(Card c) {
   Json::Value j; j["rank"]=c.rank;
   const char* suits[]={"clubs","diamonds","hearts","spades"};
   j["suit"]=suits[static_cast<int>(c.suit)]; return j;
 }
-Json::Value snapshot() {
+Json::Value snapshot(const Round& game) {
   Json::Value j;
   j["balance"]=Json::Int64(game.balance()); j["wager"]=Json::Int64(game.wager());
   j["phase"]=game.phase()==Phase::Betting?"betting":game.phase()==Phase::PlayerTurn?"playing":"finished";
@@ -35,15 +48,27 @@ Json::Value snapshot() {
   return j;
 }
 void handle(const HttpRequestPtr& req,std::function<void(const HttpResponsePtr&)>&& cb,const std::string& action) {
-  std::lock_guard<std::mutex> lock(mutex_);
+  std::lock_guard<std::mutex> lock(sessionsMutex);
   try {
+    std::string id=req->getCookie("casino_session");
+    bool created=false;
+    auto it=sessions.find(id);
+    if(id.empty()||it==sessions.end()) {
+      if(action!="state") throw std::invalid_argument("Refresh the page to start a session");
+      if(sessions.size()>=10000) throw std::runtime_error("Server is at capacity");
+      id=newId();it=sessions.emplace(id,std::make_unique<Round>()).first;created=true;
+    }
+    Round& game=*it->second;
     if(action=="start") {
       auto body=req->getJsonObject();
       if(!body||!body->isMember("bet")||!(*body)["bet"].isInt()) throw std::invalid_argument("Expected integer bet");
       game.start((*body)["bet"].asInt());
     } else if(action=="hit") game.hit();
     else if(action=="stand") game.stand();
-    cb(HttpResponse::newHttpJsonResponse(snapshot()));
+    auto res=HttpResponse::newHttpJsonResponse(snapshot(game));
+    res->addHeader("Cache-Control","no-store");
+    if(created) res->addHeader("Set-Cookie","casino_session="+id+"; Path=/; HttpOnly; SameSite=Strict; Secure");
+    cb(res);
   } catch(const std::exception& e) {
     Json::Value err;err["error"]=e.what();
     auto res=HttpResponse::newHttpJsonResponse(err);res->setStatusCode(k400BadRequest);cb(res);
@@ -51,9 +76,11 @@ void handle(const HttpRequestPtr& req,std::function<void(const HttpResponsePtr&)
 }
 }
 int main() {
+  const char* p=std::getenv("PORT");int port=p?std::atoi(p):8844;
+  if(port<1||port>65535) port=8844;
   app().registerHandler("/api/state",[](const HttpRequestPtr& r,auto&& cb){handle(r,std::move(cb),"state");},{Get});
   app().registerHandler("/api/start",[](const HttpRequestPtr& r,auto&& cb){handle(r,std::move(cb),"start");},{Post});
   app().registerHandler("/api/hit",[](const HttpRequestPtr& r,auto&& cb){handle(r,std::move(cb),"hit");},{Post});
   app().registerHandler("/api/stand",[](const HttpRequestPtr& r,auto&& cb){handle(r,std::move(cb),"stand");},{Post});
-  app().addListener("127.0.0.1",8844).setThreadNum(2).run();
+  app().setDocumentRoot("./public").addListener("0.0.0.0",port).setThreadNum(2).run();
 }

@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: blackjack-casino
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: 10000
