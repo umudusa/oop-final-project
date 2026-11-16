@@ -1,0 +1,22 @@
+BLACKJACK CASINO SIMULATION - PART I
+CLASS HIERARCHY (8 concrete player types)
+
+Player (abstract)
+|-- SafePlayer
+|   |-- SafeRedPlayer
+|   `-- SafeGreenPlayer
+|-- RandomPlayer
+|   |-- RandomRedPlayer
+|   `-- RandomGreenPlayer
+|-- MimicDealerPlayer
+|   |-- MimicDealerRedPlayer
+|   `-- MimicDealerGreenPlayer
+`-- CustomPlayer
+    |-- CustomRedPlayer
+    `-- CustomGreenPlayer
+
+Dealer (separate class)
+
+Level 1: Player
+Level 2: Four strategies
+Level 3: Eight concrete player types
