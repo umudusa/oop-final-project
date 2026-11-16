@@ -1,32 +1,40 @@
-# OOP Final Project — Blackjack Casino Simulation
+# Blackjack Casino
 
-C++ / Object-Oriented Programming final project. This repository currently contains the **Part 1** implementation, with eight concrete player types and a separate dealer class. Later improvements can be committed to this repository.
+An independent, open-source **C++20-backed blackjack game** in development. The goal is a polished browser game with virtual chips, animated cards, online rooms and multiplayer.
 
-## Project structure
+> Current status: initial C++ rules engine and tests. **Not yet a playable GUI or deployed multiplayer game.**
 
-- `src/main.cpp` — program entry point and basic assertions/demo
-- `src/Player.h` — abstract player interface and shared state
-- `src/PlayerTypes.h` — play strategies and red/green concrete player types
-- `src/Dealer.h` — dealer behavior, balance, statistics, and salary calculations
-- `BlackjackPart1.vcxproj` — Visual Studio C++ project
-- `docs/` — Part 1 report, class hierarchy, and example output
+## Tech direction
 
-## Build and run
+- **C++20** for authoritative blackjack rules, server and multiplayer game state
+- **Drogon + WebSockets** planned for the C++ HTTP/realtime server
+- **React + TypeScript** planned for the browser UI only
+- **PostgreSQL** planned for accounts and statistics
+- **CMake + CTest + GitHub Actions** for reproducible builds and checks
 
-**Visual Studio (Windows):** Open `BlackjackPart1.vcxproj`, select x64 Debug, and build/run. The project was exported from Visual Studio with toolset `v145`; if your installed Visual Studio uses a different toolset, use *Project → Retarget solution* or adjust project properties.
+## Repository
 
-**Command line (g++):**
+- `cpp/game-engine/Blackjack.hpp`: cards, shuffled shoe, hand values, outcome and payout logic, table wager tiers
+- `cpp/game-engine/tests.cpp`: baseline engine assertions
+- `cpp/game-engine/CMakeLists.txt`: standalone engine test build
+- `docs/WEB_GAME_ROADMAP.md`: product roadmap and architecture
+- `src/`: legacy C++ prototype retained for reference while migrating to the game engine
+
+## Run the current tests
 
 ```bash
-g++ -std=c++17 -Wall -Wextra -pedantic src/main.cpp -o blackjack
-./blackjack
+cmake -S cpp/game-engine -B build/engine
+cmake --build build/engine
+ctest --test-dir build/engine --output-on-failure
 ```
 
-The program demonstrates each player's bet and hit/stand decision, followed by dealer rules and basic assertions. Random decisions are seeded for repeatability (`srand(7)`).
+## Development plan
 
-## Development status
+1. C++ game engine with complete single-player round lifecycle and tests.
+2. C++ server API and one fully playable browser table.
+3. Lobby, 4–8-seat rooms, bots and real-time multiplayer.
+4. Profiles, statistics, mobile polish and cloud deployment.
 
-- [x] Part 1: player class hierarchy and dealer demonstration
-- [ ] Future project parts and improvements
+All wagers use **virtual chips only**, with no real-money deposits or withdrawals.
 
-This is a source-code repository, not a ZIP archive. Generated Visual Studio caches, executables, and build intermediates are excluded from version control by `.gitignore`.
+This repository is a personal software-development project, not a course submission. See the [roadmap](docs/WEB_GAME_ROADMAP.md).
