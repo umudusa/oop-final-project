@@ -1,42 +1,36 @@
-# Blackjack Casino — C++ Backend Game Roadmap
+# Blackjack Casino — Development Roadmap
 
-This branch is an independent portfolio game track. Preserve the academic C++ assignment on main; do not mix instructor submissions with portfolio features.
+## Goal
+Build a professional, independently developed, browser-playable blackjack casino using virtual chips, with multiplayer rooms and a C++ backend. This GitHub repository is for personal development and portfolio use; course submissions are handled separately outside this repository.
 
-## Architecture decision
-**C++20 is authoritative for all gameplay and backend logic.** No TypeScript/JavaScript game engine.
+## Architecture
+- C++20: authoritative game engine and backend; all card draws, turn validation, payouts and balances happen server-side
+- Drogon: planned C++ HTTP/WebSocket API
+- React + TypeScript + Tailwind: planned responsive browser GUI, with no duplicate blackjack rules engine
+- PostgreSQL: planned persistent accounts and statistics
+- CMake/CTest and GitHub Actions: build and automated verification
 
-- `cpp/game-engine/`: portable C++20 classes for Card, Deck/Shoe, Hand, Player, Dealer, Table, Wager, Rules and settlement, with CMake and unit tests.
-- `cpp/server/`: C++ Drogon HTTP/WebSocket server; server-owned room state, cards, turns, virtual-chip balances and settlement.
-- `apps/web/`: React + TypeScript frontend ONLY for lobby, cards, controls, animations, room display and communication with C++ backend.
-- `docs/`: design decisions, architecture and deployment.
-- PostgreSQL later for accounts, history and statistics.
-
-Reuse/refactor the existing C++ Player, RandomPlayer, RandomRedPlayer and Dealer classes after reviewing their implementations. Do not assume they already implement full game rules.
-
-## Game requirements
-- Browser-playable blackjack, virtual chips only (no deposits, withdrawals or cash-out).
-- Dealer draws on 16 or less and stands on 17 or more; natural blackjack pays 3:2, regular wins 1:1, pushes return wagers.
-- Red ($5–45 in steps of 5), Green ($50–95 in steps of 5), Black ($100–490 in steps of 10), Blue ($500–1000 in steps of 10).
-- Room capacity 4–8 seats; real online seat counts only after multiplayer is implemented.
-- Bot strategies: Safe, Random, Mimics Dealer, custom; optional expert counting.
-- All card draws, wager validation and outcomes must be calculated in C++ on the server.
+## Core game
+- Ace 1/11, faces 10, natural blackjack pays 3:2, standard win 1:1, push returns wager
+- Dealer hits on 16 and stands on 17
+- Virtual chips only, no real-money gambling or cash-out
+- Red, Green, Black and Blue betting tiers
+- 4–8 seat rooms; show real online player counts only once network multiplayer works
+- Bot strategies and optional advanced actions after the basic round works
 
 ## Delivery milestones
-1. C++20 game engine with CMake, unit tests and deterministic game simulations.
-2. C++ Drogon server with endpoints for starting a round, placing bets, hit, stand and retrieving state.
-3. React frontend: polished lobby, one fully playable single-player table, animations and virtual chips.
-4. C++ WebSocket multiplayer rooms, seats, synchronized turns, reconnect handling, anti-duplicate action safeguards.
-5. Persistent profiles and stats, CI, production deployment and monitoring.
+1. **Engine:** complete C++ round state machine, deterministic tests and wager validation
+2. **Playable MVP:** C++ API + polished React table; bet, deal, hit, stand, settlement and restart
+3. **Multiplayer:** server-authoritative WebSocket rooms, seats, turns, reconnects and anti-duplicate actions
+4. **Production:** profiles, statistics, accessible mobile UI, CI and hosted deployment
 
-## Proposed repository layout
+## Structure
 ```
-cpp/
-  game-engine/
-  server/
-apps/
-  web/
-docs/
-  WEB_GAME_ROADMAP.md
+cpp/game-engine/     C++20 rules engine and tests
+cpp/server/          Planned C++ API and WebSocket server
+apps/web/            Planned React browser client
+src/                 Earlier C++ prototype, retained as reference
+docs/                Architecture and roadmap
 ```
 
-**Status:** Architecture plan only; no playable GUI or server implemented yet.
+**Current status:** The initial engine code and test target exist; the GUI, API, rooms and deployment are not implemented yet.
