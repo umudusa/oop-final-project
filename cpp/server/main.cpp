@@ -82,9 +82,9 @@ void handle(const HttpRequestPtr& req,std::function<void(const HttpResponsePtr&)
 int main() {
   const char* p=std::getenv("PORT");int port=p?std::atoi(p):8844;
   if(port<1||port>65535) port=8844;
-  app().registerHandler("/api/state",[](const HttpRequestPtr& r,auto&& cb){handle(r,std::move(cb),"state");},{Get});
-  app().registerHandler("/api/start",[](const HttpRequestPtr& r,auto&& cb){handle(r,std::move(cb),"start");},{Post});
-  app().registerHandler("/api/hit",[](const HttpRequestPtr& r,auto&& cb){handle(r,std::move(cb),"hit");},{Post});
-  app().registerHandler("/api/stand",[](const HttpRequestPtr& r,auto&& cb){handle(r,std::move(cb),"stand");},{Post});
+  app().registerHandler("/api/state",[](const HttpRequestPtr& r,std::function<void(const HttpResponsePtr&)>&& cb){handle(r,std::move(cb),"state");},{Get});
+  app().registerHandler("/api/start",[](const HttpRequestPtr& r,std::function<void(const HttpResponsePtr&)>&& cb){handle(r,std::move(cb),"start");},{Post});
+  app().registerHandler("/api/hit",[](const HttpRequestPtr& r,std::function<void(const HttpResponsePtr&)>&& cb){handle(r,std::move(cb),"hit");},{Post});
+  app().registerHandler("/api/stand",[](const HttpRequestPtr& r,std::function<void(const HttpResponsePtr&)>&& cb){handle(r,std::move(cb),"stand");},{Post});
   app().setDocumentRoot("./public").addListener("0.0.0.0",port).setThreadNum(2).run();
 }
